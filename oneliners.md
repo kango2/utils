@@ -10,3 +10,12 @@ print "$h"; for ($i=0;$i<length($sequence{$h});$i+=60){ \
 print substr($sequence{$h},$i,60)}}}' \
 input.fasta >output.fasta
 ```
+
+# Create `bed` file with fixed size windows from SAM/BAM/CRAM file
+
+Often times, we need to calculate coverage/depth etc from SAM/BAM?CRAM files over a sliding window of fixed size. We can create a `bed` file from header information in SAM/BAM files to quickly generate such file for use.
+
+```
+export WINDOW=1000000
+samtools view -H INPUT.bam | perl -lne 'if ($_=~/SN:(\S+)\tLN:(\d+)/){ $c=$1;$l=$2; for ($i=0;$i<$l;$i+=$ENV{"WINDOW"}) { print "$c\t$i\t". ((($i+$ENV{"WINDOW"}) > $l) ? $l : ($i+$ENV{"WINDOW"}))  }} '
+```
