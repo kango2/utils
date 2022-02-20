@@ -12,5 +12,5 @@ Use cases:
 1. `samtools` is unable to work with very large chromsosomes 
 
 ```
-splitchrann.pl input.fasta output.fasta inputannotation outputannotations annotationtype maxchrsize
+splitchrann.pl input.fasta output.fasta inputannotation outputannotations annotationtype[bed,gtf,gff] maxchrsize
 ```
