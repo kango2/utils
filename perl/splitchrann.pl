@@ -22,11 +22,6 @@ foreach my $b (split(",",$breaks)) {
 #012|345 #old, bed
 #012|012 #new, bed
 
-my $seqid = "";
-my $description = "";
-my $sequence = "";
-my %brokenchr = ();
-my @characters = ("A".."ZZZ"); ##limitations for more than 18278 fragments
 
 if ($inputann =~ /.*gz$/) {
 	open (IA, "zcat $inputann |") or die $!;
@@ -93,6 +88,9 @@ if ($outfasta =~ /.*gz$/){
 else {
 	open (O, ">$outfasta") or die $!;
 }
+my $seqid = "";
+my $description = "";
+my $sequence = "";
 
 while (my $line = <F>) {
 	chomp $line;
@@ -122,7 +120,7 @@ while (my $line = <F>) {
 		$sequence = "";
 	}
 	else {
-		$sequence = $line;
+		$sequence .= $line;
 	}
 }
 if ($sequence && length($sequence) > 0) {
