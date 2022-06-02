@@ -1,3 +1,3 @@
 ## Kmer subtraction
 
-Jellyfish count dump files can be used to identify (subtract) kmers that exist in one file but not the other. Jellyfish can accomplish this task but doesn't take counts into account. Therefore, Arthur Georges has created a script that can first filter kmer count dump files for specified threshold and identify unique kmers in each file. 
+Jellyfish count dump files can be used to identify (subtract) kmers that exist in one file but not the other. Jellyfish can accomplish this task but doesn't take counts into account. Therefore, Arthur Georges has created a script that can first filter kmer count dump files for specified threshold and identify unique kmers in each file. [master.kmer27.dump](https://github.com/kango2/utils/blob/main/testdata/master.kmer27.dump) and [subtraction.kmer27.dump](https://github.com/kango2/utils/blob/main/testdata/subtraction.kmer27.dump) files contain test data for testing of script.
