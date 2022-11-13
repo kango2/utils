@@ -19,3 +19,13 @@ Often times, we need to calculate coverage/depth etc from SAM/BAM?CRAM files ove
 export WINDOW=1000000
 samtools view -H INPUT.bam | perl -lne 'if ($_=~/SN:(\S+)\tLN:(\d+)/){ $c=$1;$l=$2; for ($i=0;$i<$l;$i+=$ENV{"WINDOW"}) { print "$c\t$i\t". ((($i+$ENV{"WINDOW"}) > $l) ? $l : ($i+$ENV{"WINDOW"}))  }} '
 ```
+# Get summary statistics from a fasta file
+
+```
+inputfile=/path/to/input.fasta
+echo ${inputfile},$(cat ${inputfile} | perl -lne 'if($_=~/>/){push(@l,length($s));$s="";}else{$s.=$_;$total+=length($_);$gc+=$_=~tr/[GC]//;$ncount+=$_=~tr/N//;}END{push(@l,length($s));shift@l;@l=sort{$b<=>$a}@l;$n9p=0;$n5p=0;foreach(@l){$n+=$_;if($n>=$total*0.5 && $n5p==0){$n5p=$_}elsif($n>=$total*0.9 && $n9p==0){$n9p=$_}}; print "$total,".scalar(@l).",".(sprintf "%.02f", (($gc*100)/$total)).",$ncount,".(sprintf "%.02f", $total/scalar(@l)).",".($l[int(scalar(@l)/2)]).",$l[0],$l[$#l],$n5p,$n9p"}')
+```
+NOTES:
+1. If the file is a zipped file, then use `zcat` instead of `cat`
+2. Output comma separated columns: `inputfile,# of bases,# of reads,GC,Ncount,meanLen,medianLen,longestLen,shortestLen,N50,N90
+
