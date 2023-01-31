@@ -17,14 +17,12 @@ hist(p.values)
 ##check how many p-values are significant below 0.05
 sum(p.values < .05)
 
-##function for bonferroni correction
+##function for adjusting for p-value
+##p.adjust(p, method = p.adjust.methods, n = length(p))
 
-bonferroni.correction <- function(p, n){
-    return(p * n)
-}
 
 ##get bonferroni corrected p-values
-corrected.p <- bonferroni.correction(p.values, length(p.values))
+corrected.p <- p.adjust(p.values, method = "bonferroni", n = length(p.values))
 
 ##check how many p-values are significant below 0.05 after correction
 sum(unlist(corrected.p) < .05)
