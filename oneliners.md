@@ -19,6 +19,13 @@ Often times, we need to calculate coverage/depth etc from SAM/BAM?CRAM files ove
 export WINDOW=1000000
 samtools view -H INPUT.bam | perl -lne 'if ($_=~/SN:(\S+)\tLN:(\d+)/){ $c=$1;$l=$2; for ($i=0;$i<$l;$i+=$ENV{"WINDOW"}) { print "$c\t$i\t". ((($i+$ENV{"WINDOW"}) > $l) ? $l : ($i+$ENV{"WINDOW"}))  }} '
 ```
+Alternately, one can use `.faidx` file as well to achieve the same outcome.
+
+```
+export WINDOW=1000000
+cat genome.fasta.faidx | perl -lne '@a=split("\t",$_); $c=$a[0];$l=$a[1]; for ($i=0;$i<$l;$i+=$ENV{"WINDOW"}) { print "$c\t$i\t". ((($i+$ENV{"WINDOW"}) > $l) ? $l : ($i+$ENV{"WINDOW"}))  }} '
+```
+
 # Get summary statistics from a fasta file
 
 ```
