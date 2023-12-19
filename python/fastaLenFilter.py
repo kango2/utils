@@ -1,5 +1,6 @@
 import argparse
 from Bio import SeqIO
+from Bio.SeqIO.FastaIO import FastaWriter
 
 def filter_fasta_by_length(input_file, output_file, min_length=None, max_length=1000000):
     """
@@ -11,10 +12,13 @@ def filter_fasta_by_length(input_file, output_file, min_length=None, max_length=
     min_length (int, optional): Minimum length of sequences to keep. If None, no lower limit is applied.
     max_length (int): Maximum length of sequences to keep.
     """
-    with open(input_file, "r") as infile, open(output_file, "w") as outfile:
-        for record in SeqIO.parse(infile, "fasta"):
-            if (min_length is None or len(record.seq) >= min_length) and len(record.seq) <= max_length:
-                SeqIO.write(record, outfile, "fasta")
+    with open(input_file, "r") as infile:
+        sequences = [record for record in SeqIO.parse(infile, "fasta")
+                     if (min_length is None or len(record.seq) >= min_length) and len(record.seq) <= max_length]
+
+    with open(output_file, "w") as outfile:
+        writer = FastaWriter(outfile, wrap=70)
+        writer.write_file(sequences)
 
 def main():
     parser = argparse.ArgumentParser(description="Filter FASTA sequences by length")
