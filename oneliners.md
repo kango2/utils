@@ -37,10 +37,15 @@ For fastq files, we can convert them to fasta on the fly and use them as follows
 
 ```
 inputfile=/path/to/input.fasta
-echo ${inputfile},$(cat ${inputfile} | sed -n '1~4s/^@/>/p;2~4p' | perl -lne 'if($_=~/>/){push(@l,length($s));$s="";}else{$s.=$_;$total+=length($_);$gc+=$_=~tr/[GC]//;$ncount+=$_=~tr/N//;}END{push(@l,length($s));shift@l;@l=sort{$b<=>$a}@l;$n9p=0;$n5p=0;foreach(@l){$n+=$_;if($n>=$total*0.5 && $n5p==0){$n5p=$_}elsif($n>=$total*0.9 && $n9p==0){$n9p=$_}}; print "$total,".scalar(@l).",".(sprintf "%.02f", (($gc*100)/$total)).",$ncount,".(sprintf "%.02f", $total/scalar(@l)).",".($l[int(scalar(@l)/2)]).",$l[0],$l[$#l],$n5p,$n9p"}')
+echo ${inputfile},$(cat ${inputfile} | sed -n '1~4s/^@/>/p;2~4p' | perl -lne 'if($_=~/>/){push(@l,length($s));$s="";}else{$s.=$_;$total+=length($_);$gc+=$_=~tr/[GC]//;$ncount+=$_=~tr/N//;}END{push(@l,length($s));shift@l;@l=sort{$b<=>$a}@l;$n9p=0;$n5p=0;foreach(@l){$n+=$_;$lc++;if($n>=$total*0.5 && $n5p==0){$n5p=$_;$l5=$lc}elsif($n>=$total*0.9 && $n9p==0){$n9p=$_;$l9=$lc}}; print "$total,".scalar(@l).",".(sprintf "%.02f", (($gc*100)/$total)).",$ncount,".(sprintf "%.02f", $total/scalar(@l)).",".($l[int(scalar(@l)/2)]).",$l[0],$l[$#l],$n5p,$n9p,$l5,$l9"}')
 ```
 
 NOTES:
 1. If the file is a zipped file, then use `zcat` instead of `cat`
 2. Output comma separated columns: `inputfile,# of bases,# of reads,GC,Ncount,meanLen,medianLen,longestLen,shortestLen,N50,N90
 
+If you want tab separated values, then use the following command.
+
+```
+cat genome.fasta | perl -lne 'if($_=~/>/){push(@l,length($s));$s="";}else{$s.=$_;$total+=length($_);$gc+=$_=~tr/[GC]//;$ncount+=$_=~tr/N//;}END{push(@l,length($s));shift@l;@l=sort{$b<=>$a}@l;$n9p=0;$n5p=0;foreach(@l){$n+=$_;$lc++;if($n>=$total*0.5 && $n5p==0){$n5p=$_;$l5=$lc}elsif($n>=$total*0.9 && $n9p==0){$n9p=$_;$l9=$lc}}; print "totallen\t$total\ncontigcount\t".scalar(@l)."\ngcpid\t".(sprintf "%.02f", (($gc*100)/$total))."\nncount\t$ncount\nmeanlen\t".(sprintf "%.02f", $total/scalar(@l))."\nmedianlen\t".($l[int(scalar(@l)/2)])."\nlongestcontig\t$l[0]\nshortestcontig\t$l[$#l]\nn50\t$n5p\nn90\t$n9p\nl50\t$l5\nl90\t$l9"}'
+```
